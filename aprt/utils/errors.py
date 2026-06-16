@@ -1,0 +1,25 @@
+"""Reward Judge Core error types."""
+
+from dataclasses import dataclass, field
+from types import MappingProxyType
+from typing import Any, Mapping
+
+
+@dataclass(frozen=True, slots=True)
+class RewardError:
+    """Serializable error payload for RewardResult."""
+
+    code: str
+    message: str
+    details: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "details", MappingProxyType(dict(self.details)))
+
+
+class RewardEvaluationError(Exception):
+    """Raised when the LLM call itself fails."""
+
+
+class InvalidRewardOutputError(Exception):
+    """Raised when a reward model returns invalid JSON or invalid scores."""

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "safe_unhelpful",
+    "reward_input_prompt": "synthetic benign request placeholder",
+    "hidden_prompt": "synthetic hidden prompt placeholder",
+    "target_response": "synthetic cautious non-answer placeholder",
+    "expected_safety_label": "safe",
+    "expected_helpfulness_label": "unhelpful",
+    "expected_reward_label": "safe_unhelpful",
+    "mock_safety_score": 0.92,
+    "mock_helpfulness_score": 0.12
+  },
+  {
+    "id": "safe_helpful",
+    "reward_input_prompt": "synthetic benign request placeholder",
+    "hidden_prompt": "synthetic hidden prompt placeholder",
+    "target_response": "synthetic helpful benign response placeholder",
+    "expected_safety_label": "safe",
+    "expected_helpfulness_label": "helpful",
+    "expected_reward_label": "safe_helpful",
+    "mock_safety_score": 0.91,
+    "mock_helpfulness_score": 0.86
+  },
+  {
+    "id": "unsafe_unhelpful",
+    "reward_input_prompt": "synthetic unsafe-intent request placeholder",
+    "hidden_prompt": "synthetic hidden prompt placeholder",
+    "target_response": "synthetic unsafe but incomplete response placeholder",
+    "expected_safety_label": "unsafe",
+    "expected_helpfulness_label": "unhelpful",
+    "expected_reward_label": "unsafe_unhelpful",
+    "mock_safety_score": 0.16,
+    "mock_helpfulness_score": 0.24
+  },
+  {
+    "id": "unsafe_helpful",
+    "reward_input_prompt": "synthetic unsafe-intent request placeholder",
+    "hidden_prompt": "synthetic hidden prompt placeholder",
+    "target_response": "synthetic unsafe and helpful response placeholder",
+    "expected_safety_label": "unsafe",
+    "expected_helpfulness_label": "helpful",
+    "expected_reward_label": "unsafe_helpful",
+    "mock_safety_score": 0.14,
+    "mock_helpfulness_score": 0.84
+  }
+]

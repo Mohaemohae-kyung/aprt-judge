@@ -1,45 +1,26 @@
-# Canary Black-Box 전략
+# Canary / Evidence Detector 전략 보류 메모
 
-이 문서는 APRT Judge/QC v0에서 CanaryJudge가 가져야 할 초기 설계 경계를
-정리한다. 현재 내용은 초안이며, calibration과 review 데이터가 쌓이면 조정할 수
-있어야 한다.
+현재 구현 방향은 APRT 논문 기반 Reward Judge Core이다. 따라서 CanaryJudge,
+RegexJudge, ClassifierJudge, Evidence detector는 이번 구현 범위에서 제외한다.
 
-## 원칙
+이 문서는 이전 generic Judge/QC 논의의 흔적을 보존하되, 현재 core의 구현 기준이
+아님을 명확히 하기 위한 보류 메모다.
 
-CanaryJudge는 target response 안의 seeded marker 또는 canary-like marker를
-탐지하고 evidence를 생성해야 한다. CanaryJudge가 response를 confirmed finding으로
-직접 확정해서는 안 된다.
+## 현재 상태
 
-Black-box 환경에서 문자열 match는 보호 대상 system text, 내부 정책, 민감 정보가
-실제로 유출되었다는 증거가 아닐 수 있다. 해당 marker는 synthetic marker이거나,
-미리 심어 둔 seeded marker이거나, 변형/인용된 문자열이거나, 현재 attack goal과
-무관한 문자열일 수 있다.
+- CanaryJudge는 구현하지 않는다.
+- RegexJudge는 구현하지 않는다.
+- Evidence detector는 구현하지 않는다.
+- RewardService는 canary/evidence가 아니라 `reward_input_prompt`와
+  `target_response` pair를 Rs/Rh에 전달한다.
 
-## Evidence 역할
+## 이후 다시 논의할 때의 원칙
 
-Canary evidence는 다음과 같은 안전한 metadata를 기록해야 한다.
+나중에 evidence detector 계층을 별도 모듈로 재개하더라도 다음 원칙은 유지해야 한다.
 
-- matched reference identifier
-- response locator
-- detector mode
-- confidence
-- verification class
-- redacted match summary
+- detector는 evidence만 생성한다.
+- detector가 최종 fitness나 decision을 직접 만들지 않는다.
+- plaintext secret 또는 raw canary value를 저장하지 않는다.
+- Canary match만으로 confirmed finding을 확정하지 않는다.
 
-Evidence에는 plaintext secret 또는 raw canary value를 저장하지 않는다.
-
-## 보류해야 하는 판단
-
-다음 판단은 low-level detector가 아니라 별도 계층 또는 이후의 model-assisted
-verification 계층에서 다루어야 한다.
-
-- 해당 marker가 실제 보호 대상인지
-- 해당 노출이 현재 attack goal과 관련 있는지
-- 해당 결과를 finding candidate로 올릴 수 있는지
-- semantic review 또는 human review가 필요한지
-
-## v0 방향
-
-v0에서 CanaryJudge는 exact match, prefix/pattern match, synthetic marker
-reference를 지원할 수 있는 교체 가능한 detector로 남아야 한다. 최종 scoring,
-fitness, decision은 rubric과 routing pipeline에 남겨야 한다.
+현재 PR의 acceptance criteria에는 CanaryJudge 관련 구현이 포함되지 않는다.
