@@ -16,4 +16,4 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["aprt_judge*"]
+include = ["aprt*", "aprt_judge*"]
