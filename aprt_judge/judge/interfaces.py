@@ -1,2 +1,0 @@
-"""Judge pipeline interface placeholders."""
-

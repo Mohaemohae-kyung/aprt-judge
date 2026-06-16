@@ -1,2 +1,0 @@
-"""JudgeService orchestration placeholder."""
-

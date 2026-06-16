@@ -1,2 +1,0 @@
-"""Judge/QC pipeline package."""
-

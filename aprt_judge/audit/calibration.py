@@ -1,2 +1,0 @@
-"""Calibration workflow placeholder."""
-

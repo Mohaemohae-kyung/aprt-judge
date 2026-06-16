@@ -1,2 +1,0 @@
-"""EvidenceValidator placeholder."""
-

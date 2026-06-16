@@ -1,2 +1,0 @@
-"""APRT Judge/QC package."""
-
