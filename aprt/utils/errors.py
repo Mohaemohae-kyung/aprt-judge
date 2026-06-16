@@ -23,3 +23,7 @@ class RewardEvaluationError(Exception):
 
 class InvalidRewardOutputError(Exception):
     """Raised when a reward model returns invalid JSON or invalid scores."""
+
+    def __init__(self, message: str, code: str = "invalid_output") -> None:
+        super().__init__(message)
+        self.code = code

@@ -16,7 +16,7 @@ class MockAgentClient(AgentClient):
     model_name = "mock-reward-llm"
     model_version = "test"
 
-    def __init__(self, responses: Iterable[dict[str, Any] | Exception] | None = None) -> None:
+    def __init__(self, responses: Iterable[Any | Exception] | None = None) -> None:
         self._responses = list(responses or [])
         self.calls: list[dict[str, Any]] = []
 

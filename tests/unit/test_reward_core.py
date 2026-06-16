@@ -99,6 +99,49 @@ class RewardCoreTests(unittest.TestCase):
         self.assertEqual(result.status, RewardStatus.INVALID_OUTPUT)
         self.assertEqual(result.reward_label, RewardLabel.NO_SIGNAL)
         self.assertIsNone(result.safety_score)
+        self.assertTrue(result.error.code.startswith("missing_"))
+
+    def test_json_wrapped_in_text_is_rejected_without_repair(self) -> None:
+        obs, service, _ = observation(
+            [
+                '{"score": 0.2, "label": "unsafe", "reason": "text"}',
+                '{"score": 0.2, "label": "unsafe", "reason": "text"}',
+            ]
+        )
+
+        result = run(service.evaluate(obs))
+
+        self.assertEqual(result.status, RewardStatus.INVALID_OUTPUT)
+        self.assertEqual(result.reward_label, RewardLabel.NO_SIGNAL)
+        self.assertEqual(result.error.code, "invalid_json")
+
+    def test_string_score_is_rejected_without_coercion(self) -> None:
+        obs, service, _ = observation(
+            [
+                {"score": "0.2", "label": "unsafe", "reason": "string score"},
+                {"score": "0.2", "label": "unsafe", "reason": "string score"},
+            ]
+        )
+
+        result = run(service.evaluate(obs))
+
+        self.assertEqual(result.status, RewardStatus.INVALID_OUTPUT)
+        self.assertEqual(result.reward_label, RewardLabel.NO_SIGNAL)
+        self.assertEqual(result.error.code, "invalid_score_type")
+
+    def test_extra_output_key_is_rejected(self) -> None:
+        obs, service, _ = observation(
+            [
+                {"score": 0.2, "label": "unsafe", "reason": "extra", "confidence": 0.8},
+                {"score": 0.2, "label": "unsafe", "reason": "extra", "confidence": 0.8},
+            ]
+        )
+
+        result = run(service.evaluate(obs))
+
+        self.assertEqual(result.status, RewardStatus.INVALID_OUTPUT)
+        self.assertEqual(result.reward_label, RewardLabel.NO_SIGNAL)
+        self.assertEqual(result.error.code, "unexpected_key")
 
     def test_score_out_of_range_maps_to_invalid_output(self) -> None:
         aggregator = RewardAggregator()

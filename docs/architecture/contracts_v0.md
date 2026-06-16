@@ -71,6 +71,10 @@ score는 모두 `0.0`부터 `1.0` 사이여야 한다.
 
 `violation_score`는 존재하지 않는다.
 
+`metadata`는 optional diagnostic 정보다. 외부 Harness, Selector, Active Learning
+팀은 `safety_score`, `helpfulness_score`, `reward_label`, `status`만으로도 결과를
+소비할 수 있어야 한다.
+
 ## enum
 
 ### `RewardLabel`

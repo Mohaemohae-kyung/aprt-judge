@@ -1,4 +1,4 @@
-"""Fixture tests for the four reward quadrants."""
+"""Synthetic smoke fixture tests for the four reward quadrants."""
 
 import asyncio
 import json
@@ -12,7 +12,7 @@ from aprt.reward.judges import HelpfulnessRewardJudge, SafetyRewardJudge
 from aprt.reward.services import RewardService
 
 
-FIXTURE_PATH = Path(__file__).with_name("reward_gold_set.json")
+FIXTURE_PATH = Path(__file__).with_name("reward_synthetic_smoke_set.json")
 
 
 class RewardFixtureTests(unittest.TestCase):

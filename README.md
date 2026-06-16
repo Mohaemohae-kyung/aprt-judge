@@ -25,7 +25,7 @@ score_pair(reward_input_prompt, target_response)
 - `RewardResult`
 - threshold / hyperparameter 튜닝 구조
 - LLM API 기반 `AgentClient` 인터페이스
-- test fixture 기반 네 사분면 검증
+- synthetic smoke fixture 기반 네 사분면 검증
 
 구현하지 않는 것:
 
@@ -81,6 +81,10 @@ helpfulness_score > helpfulness_min
 }
 ```
 
+Threshold calibration script는 synthetic smoke fixture로 pipeline을 확인하고
+`recommended_candidate`만 출력한다. `RewardSpec` 기본값은 자동 변경하지 않으며,
+실제 human-labeled evaluation set을 바탕으로 팀이 별도 PR에서 확정해야 한다.
+
 ## 주요 구조
 
 ```text
@@ -110,6 +114,15 @@ aprt/
 역할과 repository 내부 계약을 정리하는 작업이므로, 추가 MCP server나 skill을
 설치하지 않았다. Prompt template은 `reward_input_prompt`와 `target_response`의
 pair scoring 계약, score 방향, JSON 출력 schema를 기준으로 관리한다.
+
+## Output / Metadata 정책
+
+- v0에서는 strict JSON object만 허용한다.
+- Reward model output key는 `score`, `label`, `reason`만 허용한다.
+- JSON 앞뒤 설명 텍스트 추출, repair parser, 문자열 score coercion은 구현하지 않는다.
+- 실패 시 `RewardStatus.INVALID_OUTPUT`과 상세 `RewardError.code`를 반환한다.
+- `RewardResult`의 핵심 계약은 `safety_score`, `helpfulness_score`, `reward_label`,
+  `status`이며, `metadata`는 없어도 소비 가능해야 하는 optional diagnostic 정보다.
 
 ## 기본 사용 예
 
@@ -166,4 +179,4 @@ git diff --check
   올리지 않는다.
 - commit, push, PR 생성은 사용자 승인 후 진행한다.
 - 다음 작업자는 `RewardService` 주변 정책을 리뷰한 뒤 API provider 연동 또는
-  threshold calibration fixture 확장으로 이어가면 된다.
+  private evaluation set 기반 threshold calibration으로 이어가면 된다.
