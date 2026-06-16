@@ -1,0 +1,2 @@
+"""Rubric registry and definitions."""
+

@@ -1,0 +1,28 @@
+version: 1
+project_type: aprt-judge-qc-v0
+
+mcp:
+  servers:
+    - context7
+    - codex_apps
+  tool_scopes:
+    context7:
+      allow:
+        - resolve-library-id
+        - query-docs
+    codex_apps:
+      allow_prefixes:
+        - github.
+      deny_prefixes:
+        - notion.
+
+skills:
+  allowed:
+    - project-tool-gate
+
+notes:
+  - Use Context7 only for public library/API documentation lookups.
+  - Use codex_apps only for GitHub repository, issue, pull request, and CI workflow operations.
+  - Do not use Notion tools from codex_apps for this project unless this allowlist is updated.
+  - Do not send proprietary source, findings, secrets, payloads, or credentials to external MCP services.
+  - Keep Judge/QC focused on evidence, scoring, fitness, and decision routing boundaries.
