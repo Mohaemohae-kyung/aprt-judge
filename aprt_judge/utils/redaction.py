@@ -1,2 +1,0 @@
-"""Redaction helper placeholder."""
-

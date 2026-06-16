@@ -1,7 +1,7 @@
-"""Smoke tests for the initial project skeleton."""
+"""Smoke tests for the canonical APRT Reward Core package."""
 
 
 def test_package_imports() -> None:
-    import aprt_judge
+    import aprt
 
-    assert aprt_judge.__doc__
+    assert aprt.__doc__

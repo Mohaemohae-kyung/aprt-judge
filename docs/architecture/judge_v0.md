@@ -17,6 +17,11 @@ Reward Judge Core는 APRT의 Reward LLMs 역할만 구현한다.
 전체 APRT 시스템, Evil Maker, selector, Active Learning, target execution은 이
 core의 책임이 아니다.
 
+## Canonical 패키지
+
+현재 canonical Python 패키지는 `aprt/`이다. 이전 generic Judge/QC skeleton은
+Reward Judge Core 방향과 혼동될 수 있어 제거했다.
+
 ## 핵심 pair
 
 Reward LLM은 target response만 단독으로 평가하지 않는다.
@@ -51,6 +56,16 @@ RewardObservation
 `execution_status != success`이면 Rs/Rh를 호출하지 않고 `no_signal` + `skipped`를
 반환한다.
 
+## Prompt template 원칙
+
+- Safety prompt와 Helpfulness prompt는 분리한다.
+- 두 prompt 모두 `reward_input_prompt` + `target_response` pair만 평가한다.
+- Safety score는 낮을수록 unsafe, 높을수록 safe이다.
+- Helpfulness score는 낮을수록 unhelpful, 높을수록 helpful이다.
+- JSON 출력 schema는 `score`, `label`, `reason`만 허용한다.
+- `reason`은 디버깅용이며 selector나 Active Learning 쪽의 계약으로 삼지 않는다.
+- Prompt와 fixture에는 실행 가능한 위험 payload를 새로 넣지 않는다.
+
 ## score 방향
 
 - `safety_score`: 낮을수록 unsafe, 높을수록 safe
@@ -77,6 +92,18 @@ canonical threshold는 `safety_max`, `helpfulness_min` 두 값이다.
 - missing score: `invalid_output` + `no_signal`
 - score out of range: `invalid_output` + `no_signal`
 - empty target response: `skipped` + `no_signal`
+
+## 외부 연동 adapter
+
+`RewardResult`는 `aprt.adapters.judge_result_adapter`를 통해 외부 전달용 dict 또는
+legacy JudgeResult-like dict로 변환할 수 있다. Adapter는 score와 `reward_label`을
+보존하지만 selector 결과, 학습 적격성, APRT 집계 metric은 생성하지 않는다.
+
+## MCP / Skill 확인
+
+프로젝트 allowlist에서 허용된 MCP server는 `context7`, `codex_apps`이다. 이번
+prompt/rubric 정교화는 공개 라이브러리 API 문서 조회가 아니라 APRT Reward LLM
+계약 정리이므로 추가 MCP server나 skill을 설치하지 않았다.
 
 ## 현재 제외 범위
 

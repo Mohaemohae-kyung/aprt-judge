@@ -1,2 +1,0 @@
-"""Identifier helper placeholder."""
-

@@ -96,8 +96,20 @@ aprt/
 └─ utils/
 ```
 
-기존 `aprt_judge/` skeleton은 이전 generic Judge/QC 방향의 placeholder로 남아
-있다. 현재 Reward Judge Core 구현의 기준 패키지는 `aprt/`이다.
+이전 generic Judge/QC skeleton은 더 이상 canonical 구조가 아니므로 제거했다.
+현재 Reward Judge Core 구현의 기준 패키지는 `aprt/`이다.
+
+## Prompt / Rubric 보조 도구
+
+프로젝트 allowlist 기준으로 현재 사용할 수 있는 MCP server는 다음이다.
+
+- `context7`: 공개 라이브러리/API 문서 조회용
+- `codex_apps`: GitHub issue, branch, PR, CI 확인용 `github.*` 도구
+
+이번 Reward Judge prompt 정교화는 특정 라이브러리 문서가 아니라 APRT Reward LLM
+역할과 repository 내부 계약을 정리하는 작업이므로, 추가 MCP server나 skill을
+설치하지 않았다. Prompt template은 `reward_input_prompt`와 `target_response`의
+pair scoring 계약, score 방향, JSON 출력 schema를 기준으로 관리한다.
 
 ## 기본 사용 예
 
@@ -142,7 +154,7 @@ assert result.reward_label.value == "unsafe_helpful"
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py"
-.\.venv\Scripts\python.exe -m compileall aprt aprt_judge tests scripts
+.\.venv\Scripts\python.exe -m compileall aprt tests scripts
 .\.venv\Scripts\python.exe scripts\calibrate_thresholds.py
 git diff --check
 ```
