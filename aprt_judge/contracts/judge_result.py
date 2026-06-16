@@ -1,0 +1,2 @@
+"""JudgeResult contract placeholder."""
+

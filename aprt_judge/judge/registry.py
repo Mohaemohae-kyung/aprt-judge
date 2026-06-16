@@ -1,0 +1,2 @@
+"""Judge registry placeholder."""
+

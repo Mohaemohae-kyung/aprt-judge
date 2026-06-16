@@ -1,7 +1,32 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
-.idea/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# Test and coverage output
 .pytest_cache/
-.env
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local IDE and OS files
+.idea/
+.vscode/
+.codex/
 .DS_Store
+
+# Local secrets and environment
+.env
+.env.*
+
+# Local Codex/AI working guides
+SKILL.md
+docs/workflow/

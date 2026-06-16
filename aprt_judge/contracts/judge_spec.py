@@ -1,0 +1,2 @@
+"""Judge specification contract placeholder."""
+

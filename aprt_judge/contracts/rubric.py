@@ -1,0 +1,2 @@
+"""Success rubric contract placeholder."""
+
