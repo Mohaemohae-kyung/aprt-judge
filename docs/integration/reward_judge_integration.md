@@ -135,29 +135,32 @@ RewardService
   - unit/integration/synthetic fixture 테스트용 deterministic client
   - API key 없이 테스트 가능
 - `APIAgentClient`
-  - 실제 Claude, Gemini, OpenAI 등 provider SDK를 붙이기 위한 skeleton
-  - 현재는 환경변수 기반 설정과 실패 모드만 준비되어 있음
-  - 실제 provider 호출 구현은 추후 `aprt/clients/api_agent_client.py`에서 연결해야 함
+  - OpenRouter 단일 gateway를 통해 실제 Reward LLM을 호출하는 client
+  - OpenRouter API key 하나를 사용하고 Rs/Rh는 모델명으로 분리함
+  - provider별 개별 SDK 대신 OpenRouter chat completions API를 직접 호출함
 
-현재 skeleton에서 준비된 환경변수:
+현재 OpenRouter 연동 환경변수:
 
 ```text
-REWARD_LLM_PROVIDER
-CLAUDE_API_KEY
-GEMINI_API_KEY
-REWARD_LLM_MODEL
+REWARD_LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY
+REWARD_LLM_SAFETY_MODEL
+REWARD_LLM_HELPFULNESS_MODEL
 REWARD_LLM_TIMEOUT_SEC
 REWARD_LLM_MAX_RETRIES
+OPENROUTER_BASE_URL
+OPENROUTER_HTTP_REFERER
+OPENROUTER_APP_TITLE
 ```
 
-OpenAI 같은 provider를 추가하려면 `APIAgentClient`에 provider 분기와 필요한 API key
-환경변수를 추가한다. provider별 SDK 연동은 Reward Judge Core의 public contract를
-바꾸지 않고 `AgentClient.complete_json()` 구현체 안에서 처리한다.
+OpenRouter의 model slug에 Claude, Gemini, OpenAI 계열 모델을 지정할 수 있다.
+Reward Judge Core의 public contract는 provider/model 선택과 무관하게
+`AgentClient.complete_json()`으로 유지된다.
 
 ### 같은 provider와 다른 provider 구성
 
-Rs와 Rh는 같은 provider/model을 사용할 수 있다. 이 경우 같은 `AgentClient` 인스턴스를
-두 Judge에 전달하면 된다.
+Rs와 Rh는 같은 OpenRouter model을 사용할 수 있다. 이 경우 같은 `AgentClient`
+인스턴스를 두 Judge에 전달하면 된다.
 
 ```python
 client = APIAgentClient.from_env()
@@ -165,12 +168,12 @@ safety_judge = SafetyRewardJudge("safety_reward.v0", client)
 helpfulness_judge = HelpfulnessRewardJudge("helpfulness_reward.v0", client)
 ```
 
-Rs와 Rh를 서로 다른 provider/model로 붙이는 것도 가능하다. 이 경우 Judge별로 다른
-`AgentClient` 인스턴스를 전달한다.
+Rs와 Rh를 서로 다른 OpenRouter model로 붙이는 것도 가능하다. 이 경우 Judge별로 다른
+`AgentClient` 인스턴스를 전달한다. 두 client는 같은 `OPENROUTER_API_KEY`를 공유한다.
 
 ```python
-safety_client = APIAgentClient(provider="provider-a", model_name="safety-model")
-helpfulness_client = APIAgentClient(provider="provider-b", model_name="helpfulness-model")
+safety_client = APIAgentClient.from_env_for_role("safety")
+helpfulness_client = APIAgentClient.from_env_for_role("helpfulness")
 
 safety_judge = SafetyRewardJudge("safety_reward.v0", safety_client)
 helpfulness_judge = HelpfulnessRewardJudge("helpfulness_reward.v0", helpfulness_client)
@@ -323,14 +326,13 @@ RewardObservation
 - `RewardResult`
 - `RewardResult adapter`
 - `MockAgentClient`
-- `APIAgentClient` skeleton
+- OpenRouter 기반 `APIAgentClient`
 - strict JSON validation
 - synthetic smoke fixture 기반 threshold calibration script
 
 ## 추후 구현이 필요한 부분
 
-- provider별 `APIAgentClient.complete_json()` 실제 SDK 연동
-- provider별 API key 환경변수 확장
+- OpenRouter model 선택 기준과 운영 profile 확정
 - private human-labeled evaluation set 기반 threshold 확정
 - 운영용 latency, request id, token usage metadata
 - Selector / Active Learning 팀의 batch selection 로직

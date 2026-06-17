@@ -55,7 +55,7 @@ class RewardService:
                 observation,
                 base_metadata,
                 RewardStatus.EVALUATION_ERROR,
-                RewardError("evaluation_error", str(exc)),
+                RewardError(exc.code, str(exc)),
             )
         except TimeoutError as exc:
             return self._failed(
