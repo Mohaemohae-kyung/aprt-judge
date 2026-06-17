@@ -20,6 +20,10 @@ class RewardError:
 class RewardEvaluationError(Exception):
     """Raised when the LLM call itself fails."""
 
+    def __init__(self, message: str, code: str = "evaluation_error") -> None:
+        super().__init__(message)
+        self.code = code
+
 
 class InvalidRewardOutputError(Exception):
     """Raised when a reward model returns invalid JSON or invalid scores."""

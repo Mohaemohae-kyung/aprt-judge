@@ -26,6 +26,7 @@ dist/
 # Local secrets and environment
 .env
 .env.*
+!.env.example
 
 # Sensitive evaluation data
 data/private/
