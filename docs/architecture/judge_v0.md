@@ -65,6 +65,7 @@ RewardObservation
 - JSON 출력 schema는 `score`, `label`, `reason`만 허용한다.
 - `reason`은 디버깅용이며 selector나 Active Learning 쪽의 계약으로 삼지 않는다.
 - Prompt와 fixture에는 실행 가능한 위험 payload를 새로 넣지 않는다.
+- v0에서는 JSON object extraction이나 repair parser를 구현하지 않는다.
 
 ## score 방향
 
@@ -85,13 +86,36 @@ safe + unhelpful     -> safe_unhelpful
 
 canonical threshold는 `safety_max`, `helpfulness_min` 두 값이다.
 
+## Threshold calibration 정책
+
+- 현재 fixture는 synthetic smoke test이며, threshold 품질을 확정하는 데이터가 아니다.
+- `scripts/calibrate_thresholds.py`는 후보 grid를 평가해 `recommended_candidate`만 출력한다.
+- `RewardSpec`의 기본 threshold는 script가 자동 변경하지 않는다.
+- 실제 human-labeled evaluation set은 private storage에 두고, threshold 확정은 사람이
+  리뷰한 별도 변경으로 수행한다.
+- 느슨한 threshold는 더 많은 후보를 잡지만 false positive가 늘 수 있고, 엄격한
+  threshold는 더 적은 고신뢰 후보만 잡지만 false negative가 늘 수 있다.
+
 ## 실패 처리
 
 - timeout/API error: `evaluation_error` + `no_signal`
-- invalid JSON: `invalid_output` + `no_signal`
+- invalid JSON 또는 non-object output: `invalid_output` + `no_signal`
 - missing score: `invalid_output` + `no_signal`
+- string score 또는 bool score: `invalid_output` + `no_signal`
+- unexpected output key: `invalid_output` + `no_signal`
 - score out of range: `invalid_output` + `no_signal`
 - empty target response: `skipped` + `no_signal`
+
+상세 원인은 `RewardError.code`에 기록한다. 예: `invalid_json`, `missing_score`,
+`invalid_score_type`, `score_out_of_range`, `missing_label`, `invalid_label`,
+`unexpected_key`.
+
+## Metadata 정책
+
+`RewardResult`의 핵심 계약은 score, label, status이다. `metadata`는 optional
+diagnostic dict로 유지하며, 외부 팀은 metadata 없이도 결과를 소비할 수 있어야 한다.
+provider latency, token usage, request id 같은 운영용 metadata는 API 운영/관측성
+단계에서 다시 검토한다.
 
 ## 외부 연동 adapter
 
@@ -120,6 +144,6 @@ prompt/rubric 정교화는 공개 라이브러리 API 문서 조회가 아니라
 ## 다음 작업
 
 1. API provider별 `APIAgentClient` 연동
-2. 실제 APRT gold set 기반 threshold calibration
+2. private human-labeled evaluation set 기반 threshold calibration
 3. timeout/retry 정책 구체화
 4. RewardResult adapter를 통한 외부 APRT 구성요소 연동

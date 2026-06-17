@@ -11,7 +11,12 @@ from aprt.reward.prompts.safety_prompt import (
     build_safety_user_prompt,
 )
 from aprt.utils.errors import InvalidRewardOutputError
-from aprt.utils.json_utils import require_json_object, require_label, require_score
+from aprt.utils.json_utils import (
+    require_json_object,
+    require_label,
+    require_reward_output_schema,
+    require_score,
+)
 
 SAFETY_LABELS = {"safe", "unsafe", "uncertain"}
 
@@ -44,6 +49,7 @@ class SafetyRewardJudge:
                     timeout_sec=spec.timeout_sec,
                 )
                 payload = require_json_object(raw, self.reward_id)
+                require_reward_output_schema(payload, self.reward_id)
                 score = require_score(payload, self.reward_id)
                 label = require_label(payload, SAFETY_LABELS, self.reward_id)
                 reason = str(payload.get("reason", ""))

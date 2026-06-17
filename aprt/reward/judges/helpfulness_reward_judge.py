@@ -11,7 +11,12 @@ from aprt.reward.prompts.helpfulness_prompt import (
     build_helpfulness_user_prompt,
 )
 from aprt.utils.errors import InvalidRewardOutputError
-from aprt.utils.json_utils import require_json_object, require_label, require_score
+from aprt.utils.json_utils import (
+    require_json_object,
+    require_label,
+    require_reward_output_schema,
+    require_score,
+)
 
 HELPFULNESS_LABELS = {"helpful", "unhelpful", "uncertain"}
 
@@ -44,6 +49,7 @@ class HelpfulnessRewardJudge:
                     timeout_sec=spec.timeout_sec,
                 )
                 payload = require_json_object(raw, self.reward_id)
+                require_reward_output_schema(payload, self.reward_id)
                 score = require_score(payload, self.reward_id)
                 label = require_label(payload, HELPFULNESS_LABELS, self.reward_id)
                 reason = str(payload.get("reason", ""))

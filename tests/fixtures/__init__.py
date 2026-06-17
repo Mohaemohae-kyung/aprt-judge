@@ -1,1 +1,1 @@
-"""Fixture tests and synthetic gold sets."""
+"""Fixture tests and synthetic smoke sets."""

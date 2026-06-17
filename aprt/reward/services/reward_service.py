@@ -48,7 +48,7 @@ class RewardService:
                 observation,
                 base_metadata,
                 RewardStatus.INVALID_OUTPUT,
-                RewardError("invalid_output", str(exc)),
+                RewardError(exc.code, str(exc)),
             )
         except RewardEvaluationError as exc:
             return self._failed(

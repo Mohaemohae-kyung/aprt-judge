@@ -27,6 +27,13 @@ dist/
 .env
 .env.*
 
+# Sensitive evaluation data
+data/private/
+data/private_evaluation/
+tests/fixtures/private/
+tests/fixtures/*real*
+tests/fixtures/*sensitive*
+
 # Local Codex/AI working guides
 SKILL.md
 docs/workflow/
